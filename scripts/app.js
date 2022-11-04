@@ -46,28 +46,54 @@ btnGet.addEventListener('click', () => {
   if (!id) return getUsers();
 
   getUserId(id);
+
+  inputGetId.value = '';
 });
 
 btnPost.addEventListener('click', () => {
   const body = {
     name: inputPostNombre.value,
-    lastname: inputPostApellido.value
+    lastname: inputPostApellido.value,
+  };
+  createUser(body);
+
+  inputPostNombre.value = '';
+  inputPostApellido.value = '';
+});
+
+btnPut.addEventListener('click', async () => {
+  const id = inputPutId.value;
+
+  try {
+    const response = await fetch(
+      `https://6365190cf711cb49d1f50e82.mockapi.io/api/jap/users/${id}`
+    );
+    const result = await response.json();
+    if (response.status !== 200) return showError();
+    console.log(result);
+    inputPutNombre.value = result.name;
+    inputPutApellido.value = result.lastname;
+  } catch (error) {
+    console.log(error.message);
   }
-  createUser(body)
 });
 
 btnSendChanges.addEventListener('click', () => {
   const id = inputPutId.value;
   const body = {
     name: inputPutNombre.value,
-    lastname: inputPutApellido.value
-  }
-  updateUser(body, id)
+    lastname: inputPutApellido.value,
+  };
+  updateUser(body, id);
+  inputPutNombre.value = '';
+  inputPutApellido.value = '';
+  inputPutId.value = '';
 });
 
 btnDelete.addEventListener('click', () => {
   const id = inputDelete.value;
   deleteUser(id);
+  inputDelete.value = '';
 });
 
 async function getUsers() {
@@ -108,6 +134,7 @@ async function createUser(body) {
       }
     );
     if (response.status !== 201) return showError();
+    getUsers();
   } catch (error) {
     console.log(error);
   }
@@ -124,6 +151,7 @@ async function updateUser(body, id) {
       }
     );
     if (response.status !== 200) return showError();
+    getUsers();
   } catch (error) {
     console.log(error);
   }
@@ -139,6 +167,7 @@ async function deleteUser(id) {
       }
     );
     if (response.status !== 200) return showError();
+    getUsers();
   } catch (error) {
     console.log(error);
   }
