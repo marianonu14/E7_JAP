@@ -15,13 +15,14 @@ const alertMessage = document.getElementById('alert-error');
 
 inputPostNombre.addEventListener('input', validationNew);
 inputPostApellido.addEventListener('input', validationNew);
-inputPutNombre.addEventListener('input', validationMod);
-inputPutApellido.addEventListener('input', validationMod);
+inputPutNombre.addEventListener('input', validationUpd);
+inputPutApellido.addEventListener('input', validationUpd);
 
 inputPutId.addEventListener('input', () => {
   if (!inputPutId.value) return (btnPut.disabled = true);
   btnPut.disabled = false;
 });
+
 inputDelete.addEventListener('input', () => {
   if (!inputDelete.value) return (btnDelete.disabled = true);
   btnDelete.disabled = false;
@@ -33,7 +34,7 @@ function validationNew() {
   btnPost.disabled = true;
 }
 
-function validationMod() {
+function validationUpd() {
   if (inputPutNombre.value && inputPutApellido.value)
     return (btnSendChanges.disabled = false);
   btnSendChanges.disabled = true;
@@ -55,12 +56,13 @@ btnPost.addEventListener('click', () => {
   createUser(body)
 });
 
-btnPut.addEventListener('click', () => {
-  console.log('Button Put');
-});
-
 btnSendChanges.addEventListener('click', () => {
-  console.log('Button Send Changes');
+  const id = inputPutId.value;
+  const body = {
+    name: inputPutNombre.value,
+    lastname: inputPutApellido.value
+  }
+  updateUser(body, id)
 });
 
 btnDelete.addEventListener('click', () => {
@@ -74,7 +76,6 @@ async function getUsers() {
       'https://6365190cf711cb49d1f50e82.mockapi.io/api/jap/users'
     );
     const result = await response.json();
-    console.log(result);
     if (response.status !== 200) return showError();
     if (!result.length) return showError();
     showData(result);
@@ -107,6 +108,22 @@ async function createUser(body) {
       }
     );
     if (response.status !== 201) return showError();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function updateUser(body, id) {
+  try {
+    const response = await fetch(
+      `https://6365190cf711cb49d1f50e82.mockapi.io/api/jap/users/${id}`,
+      {
+        method: 'PUT',
+        headers: { 'Content-type': 'application/json;charset=UTF-8' },
+        body: JSON.stringify(body),
+      }
+    );
+    if (response.status !== 200) return showError();
   } catch (error) {
     console.log(error);
   }
