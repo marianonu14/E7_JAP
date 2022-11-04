@@ -48,7 +48,11 @@ btnGet.addEventListener('click', () => {
 });
 
 btnPost.addEventListener('click', () => {
-  console.log('Button Post');
+  const body = {
+    name: inputPostNombre.value,
+    lastname: inputPostApellido.value
+  }
+  createUser(body)
 });
 
 btnPut.addEventListener('click', () => {
@@ -89,6 +93,22 @@ async function getUserId(id) {
     showData(result);
   } catch (error) {
     console.log(error.message);
+  }
+}
+
+async function createUser(body) {
+  try {
+    const response = await fetch(
+      `https://6365190cf711cb49d1f50e82.mockapi.io/api/jap/users`,
+      {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json;charset=UTF-8' },
+        body: JSON.stringify(body),
+      }
+    );
+    if (response.status !== 201) return showError();
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -135,4 +155,7 @@ function cleanContainer() {
 
 function showError() {
   alertMessage.classList.remove('fade');
+  setTimeout(() => {
+    alertMessage.classList.add('fade');
+  }, 2500);
 }
